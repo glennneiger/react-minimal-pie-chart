@@ -60,9 +60,10 @@
     "prop-types": "^15.5.7"
   },
   "devDependencies": {
-    "@babel/core": "^7.7.4",
+    "@babel/core": "^7.7.5",
     "@babel/plugin-transform-react-jsx": "^7.7.4",
-    "@babel/preset-env": "^7.7.4",
+    "@babel/preset-env": "^7.7.6",
+    "@babel/preset-typescript": "^7.7.4",
     "@schwingbat/relative-angle": "^1.0.0",
     "@size-limit/preset-small-lib": "^2.2.1",
     "@storybook/addon-actions": "^5.2.5",
@@ -89,14 +90,15 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "svg-partial-circle": "1.0.0",
     "svg-path-parser": "^1.1.0",
-    "typescript": "^3.6.4",
+    "typescript": "^3.7.3",
     "typings-tester": "^0.3.2"
   },
   "jest": {
     "testRegex": "/__tests__/.*\\.test\\.jsx?$",
     "testURL": "http://localhost/",
-    "moduleFileExtensions": [
-      "js"
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/types/"
     ],
     "coverageReporters": [
       "text",
@@ -105,6 +107,9 @@
     "collectCoverageFrom": [
       "<rootDir>/src/**",
       "!**/__tests__/**"
+    ],
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/src/types"
     ],
     "setupFilesAfterEnv": [
       "<rootDir>/jest.setup.js"
