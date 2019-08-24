@@ -71,6 +71,7 @@
     "@storybook/react": "^5.1.3",
     "@storybook/storybook-deployer": "^2.8.1",
     "@types/react": "^16.8.13",
+    "@types/svg-partial-circle": "file:./@types/svg-partial-circle",
     "all-contributors-cli": "^6.2.0",
     "babel-jest": "^24.0.0",
     "babel-loader": "^8.0.5",
@@ -124,12 +125,12 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx}": [
+    "*.{js,ts,tsx}": [
       "npm run test:bundles:snapshot:update",
       "prettier --write",
       "git add"
     ],
-    "*.{json,md,ts}": [
+    "*.{json,md}": [
       "prettier --write",
       "git add"
     ]

@@ -76,9 +76,8 @@ exports[`Dist bundle is unchanged 1`] = `
 
     return \\"0 0 \\" + baseSize * ratio + \\" \\" + baseSize;
   }
-  function evaluateLabelTextAnchor(_temp) {
-    var _ref = _temp === void 0 ? {} : _temp,
-        labelPosition = _ref.labelPosition,
+  function evaluateLabelTextAnchor(_ref) {
+    var labelPosition = _ref.labelPosition,
         lineWidth = _ref.lineWidth,
         labelHorizontalShift = _ref.labelHorizontalShift;
 

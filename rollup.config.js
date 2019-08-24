@@ -25,7 +25,7 @@ let plugins = [
 ];
 
 export default {
-  input: 'src/index.js',
+  input: 'src/index.ts',
   plugins: plugins,
   external: external,
   output: [

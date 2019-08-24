@@ -1,0 +1,4 @@
+{
+  "name": "@types/svg-partial-circle",
+  "types": "./index.d.ts"
+}
