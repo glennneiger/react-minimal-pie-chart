@@ -31,16 +31,17 @@ type Props = {
   radius: number;
   lineWidth: number;
   reveal?: number;
-  title?: string;
+  title?: string | number;
+  [key: string]: any;
 };
 
 export default function ReactMinimalPieChartPath({
   cx,
   cy,
-  startAngle,
-  lengthAngle,
-  radius,
-  lineWidth,
+  startAngle = 0,
+  lengthAngle = 0,
+  radius = 100,
+  lineWidth = 100,
   reveal,
   title,
   ...props
@@ -88,11 +89,4 @@ ReactMinimalPieChartPath.propTypes = {
   lineWidth: PropTypes.number,
   reveal: PropTypes.number,
   title: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-};
-
-ReactMinimalPieChartPath.defaultProps = {
-  startAngle: 0,
-  lengthAngle: 0,
-  lineWidth: 100,
-  radius: 100,
 };

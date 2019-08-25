@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Path from './ReactMinimalPieChartPath';
-import DefaultLabel from './ReactMinimalPieChartLabel';
+import {
+  default as DefaultLabel,
+  Props as LabelProps,
+} from './ReactMinimalPieChartLabel';
 import { dataPropType, stylePropType } from './propTypes';
 import {
   degreesToRadians,
@@ -10,11 +13,12 @@ import {
   extractPercentage,
   valueBetween,
 } from './utils';
+import { Data, ExtendedData, StyleObject } from './commonTypes';
 
 const VIEWBOX_SIZE = 100;
 const VIEWBOX_HALF_SIZE = VIEWBOX_SIZE / 2;
 
-function sumValues(data) {
+function sumValues(data: Data) {
   return data.reduce((acc, dataEntry) => acc + dataEntry.value, 0);
 }
 
@@ -24,7 +28,7 @@ function extendData({
   lengthAngle: totalAngle,
   totalValue,
   paddingAngle,
-}) {
+}: Props) {
   const total = totalValue || sumValues(data);
   const normalizedTotalAngle = valueBetween(totalAngle, -360, 360);
   const numberOfPaddings =
@@ -49,7 +53,11 @@ function extendData({
   });
 }
 
-function makeSegmentTransitionStyle(duration, easing, furtherStyles = {}) {
+function makeSegmentTransitionStyle(
+  duration: number,
+  easing: string,
+  furtherStyles: StyleObject = {}
+) {
   // Merge CSS transition necessary for chart animation with the ones provided by "segmentsStyle"
   const transition = [
     `stroke-dashoffset ${duration}ms ${easing}`,
@@ -63,23 +71,27 @@ function makeSegmentTransitionStyle(duration, easing, furtherStyles = {}) {
   };
 }
 
-function renderLabelItem(option, props, value) {
+function renderLabelItem(
+  option: LabelProp,
+  labelProps: LabelProps,
+  value: number
+) {
   if (React.isValidElement(option)) {
-    return React.cloneElement(option, props);
+    return React.cloneElement(option, labelProps);
   }
 
-  let label = value;
+  let label: number | string | React.ReactElement = value;
   if (typeof option === 'function') {
-    label = option(props);
+    label = option(labelProps);
     if (React.isValidElement(label)) {
       return label;
     }
   }
 
-  return <DefaultLabel {...props}>{label}</DefaultLabel>;
+  return <DefaultLabel {...labelProps}>{label}</DefaultLabel>;
 }
 
-function renderLabels(data, props) {
+function renderLabels(data: ExtendedData, props: Props) {
   const labelPosition = extractPercentage(props.radius, props.labelPosition);
 
   return data.map((dataEntry, index) => {
@@ -111,9 +123,9 @@ function renderLabels(data, props) {
   });
 }
 
-function renderSegments(data, props, hide) {
+function renderSegments(data: ExtendedData, props: Props, hide: Boolean) {
   let style = props.segmentsStyle;
-  let reveal;
+  let reveal: number;
 
   if (props.animate) {
     const transitionStyle = makeSegmentTransitionStyle(
@@ -152,12 +164,17 @@ function renderSegments(data, props, hide) {
         strokeLinecap={props.rounded ? 'round' : undefined}
         fill="none"
         onMouseOver={
+          // @ts-ignore
           props.onMouseOver && (e => props.onMouseOver(e, props.data, index))
         }
         onMouseOut={
+          // @ts-ignore
           props.onMouseOut && (e => props.onMouseOut(e, props.data, index))
         }
-        onClick={props.onClick && (e => props.onClick(e, props.data, index))}
+        onClick={
+          // @ts-ignore
+          props.onClick && (e => props.onClick(e, props.data, index))
+        }
       />
     );
   });
@@ -182,8 +199,112 @@ function renderSegments(data, props, hide) {
   return paths;
 }
 
-export default class ReactMinimalPieChart extends Component {
-  constructor(props) {
+declare type LabelPropAsReactElement = React.ReactElement<LabelProps>;
+
+declare type LabelPropAsFunction = (
+  labelProps: LabelProps
+) => number | string | React.ReactElement;
+
+declare type EventHandler = (
+  event: React.MouseEvent,
+  data: Data,
+  dataIndex: number
+) => any;
+
+declare type LabelProp =
+  | boolean
+  | LabelPropAsReactElement
+  | LabelPropAsFunction;
+
+declare type Props = typeof ReactMinimalPieChart.defaultProps & {
+  className?: string;
+  style?: StyleObject;
+  data: Data;
+  cx?: number;
+  cy?: number;
+  ratio?: number;
+  startAngle?: number;
+  lengthAngle?: number;
+  totalValue?: number;
+  radius?: number;
+  lineWidth?: number;
+  paddingAngle?: number;
+  rounded?: boolean;
+  segmentsStyle?: StyleObject;
+  background?: string;
+  animate?: boolean;
+  animationDuration?: number;
+  animationEasing?: string;
+  reveal?: number;
+  injectSvg?: () => React.ReactElement | void;
+  label?: LabelProp;
+  labelPosition?: number;
+  labelStyle?: StyleObject;
+  onClick?: EventHandler;
+  onMouseOver?: EventHandler;
+  onMouseOut?: EventHandler;
+};
+
+export default class ReactMinimalPieChart extends Component<Props> {
+  static displayName = 'ReactMinimalPieChart';
+  static defaultProps = {
+    cx: VIEWBOX_HALF_SIZE,
+    cy: VIEWBOX_HALF_SIZE,
+    ratio: 1,
+    startAngle: 0,
+    lengthAngle: 360,
+    paddingAngle: 0,
+    lineWidth: 100,
+    radius: VIEWBOX_HALF_SIZE,
+    rounded: false,
+    animate: false,
+    animationDuration: 500,
+    animationEasing: 'ease-out',
+    label: false,
+    labelPosition: 50,
+    onMouseOver: undefined,
+    onMouseOut: undefined,
+    onClick: undefined,
+  };
+  static propTypes = {
+    data: dataPropType,
+    cx: PropTypes.number,
+    cy: PropTypes.number,
+    ratio: PropTypes.number,
+    totalValue: PropTypes.number,
+    className: PropTypes.string,
+    style: stylePropType,
+    segmentsStyle: stylePropType,
+    background: PropTypes.string,
+    startAngle: PropTypes.number,
+    lengthAngle: PropTypes.number,
+    paddingAngle: PropTypes.number,
+    lineWidth: PropTypes.number,
+    radius: PropTypes.number,
+    rounded: PropTypes.bool,
+    animate: PropTypes.bool,
+    animationDuration: PropTypes.number,
+    animationEasing: PropTypes.string,
+    reveal: PropTypes.number,
+    children: PropTypes.node,
+    injectSvg: PropTypes.func,
+    label: PropTypes.oneOfType([
+      PropTypes.func,
+      PropTypes.element,
+      PropTypes.bool,
+    ]),
+    labelPosition: PropTypes.number,
+    labelStyle: stylePropType,
+    onMouseOver: PropTypes.func,
+    onMouseOut: PropTypes.func,
+    onClick: PropTypes.func,
+  };
+
+  hideSegments: boolean;
+  initialAnimationTimerId: null | number;
+  initialAnimationRAFId: null | number;
+
+  constructor(props: Props) {
     super(props);
 
     if (this.props.animate === true) {
@@ -240,59 +361,3 @@ export default class ReactMinimalPieChart extends Component {
     );
   }
 }
-
-ReactMinimalPieChart.displayName = 'ReactMinimalPieChart';
-
-ReactMinimalPieChart.propTypes = {
-  data: dataPropType,
-  cx: PropTypes.number,
-  cy: PropTypes.number,
-  ratio: PropTypes.number,
-  totalValue: PropTypes.number,
-  className: PropTypes.string,
-  style: stylePropType,
-  segmentsStyle: stylePropType,
-  background: PropTypes.string,
-  startAngle: PropTypes.number,
-  lengthAngle: PropTypes.number,
-  paddingAngle: PropTypes.number,
-  lineWidth: PropTypes.number,
-  radius: PropTypes.number,
-  rounded: PropTypes.bool,
-  animate: PropTypes.bool,
-  animationDuration: PropTypes.number,
-  animationEasing: PropTypes.string,
-  reveal: PropTypes.number,
-  children: PropTypes.node,
-  injectSvg: PropTypes.func,
-  label: PropTypes.oneOfType([
-    PropTypes.func,
-    PropTypes.element,
-    PropTypes.bool,
-  ]),
-  labelPosition: PropTypes.number,
-  labelStyle: stylePropType,
-  onMouseOver: PropTypes.func,
-  onMouseOut: PropTypes.func,
-  onClick: PropTypes.func,
-};
-
-ReactMinimalPieChart.defaultProps = {
-  cx: VIEWBOX_HALF_SIZE,
-  cy: VIEWBOX_HALF_SIZE,
-  ratio: 1,
-  startAngle: 0,
-  lengthAngle: 360,
-  paddingAngle: 0,
-  lineWidth: 100,
-  radius: VIEWBOX_HALF_SIZE,
-  rounded: false,
-  animate: false,
-  animationDuration: 500,
-  animationEasing: 'ease-out',
-  label: false,
-  labelPosition: 50,
-  onMouseOver: undefined,
-  onMouseOut: undefined,
-  onClick: undefined,
-};
