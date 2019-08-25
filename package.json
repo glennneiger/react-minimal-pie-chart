@@ -127,7 +127,6 @@
   },
   "lint-staged": {
     "*.{js,ts,tsx}": [
-      "npm run test:bundles:snapshot:update",
       "prettier --write",
       "git add"
     ],
