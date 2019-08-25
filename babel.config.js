@@ -21,6 +21,13 @@ module.exports = api => {
     plugins: [
       '@babel/plugin-transform-react-jsx',
       [
+        'babel-plugin-typescript-to-proptypes',
+        {
+          maxSize: 0,
+          typeCheck: true,
+        },
+      ],
+      [
         '@babel/plugin-proposal-class-properties',
         {
           loose: true,
