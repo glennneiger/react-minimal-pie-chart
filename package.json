@@ -28,6 +28,7 @@
     "test:update": "npm run compile && npm run test:bundles:snapshot -- -u",
     "clean": "rm -rf lib es dist",
     "compile": "npm run clean && rollup -c",
+    "compile:tsc": "tsc",
     "contrib:add": "all-contributors add",
     "contrib:generate": "all-contributors generate",
     "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
