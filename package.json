@@ -11,9 +11,7 @@
     "dist",
     "es",
     "lib",
-    "types",
-    "src",
-    "!__tests__"
+    "types"
   ],
   "sideEffects": false,
   "scripts": {
