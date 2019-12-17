@@ -1,5 +1,5 @@
 import React from 'react';
-import PieChart from '../src/index.js';
+import PieChart from '../src';
 
 const dataMock = [
   { value: 10, color: 'url(#gradient1)' },
